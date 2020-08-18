@@ -24,8 +24,10 @@ BCNS = {'Queen': 'E1234567', 'LexCorp': 'E2345678', 'DailyPlanet': 'E3456789'}
 
 filepath = 'C:\\Users\\YourUserName\\Downloads'
 
+#if you run it at the end of the month - label them for due date of next month
 today = date.today()
-yrmo = today.strftime("%Y-%m")
+nextmo = today+datetime.timedelta(weeks=2)
+yrmo = nextmo.strftime("%Y-%m")
 
 cluser = input("Colonial user name: ")
 clpwd = input("Colonial password: ")
@@ -41,14 +43,14 @@ element.send_keys(cluser)
 element = driver.find_element_by_id("password")
 element.send_keys(clpwd)
 element.send_keys(Keys.RETURN)
-time.sleep(3)
+time.sleep(10)
 
 #step 2 - for each client, enter the BCN
 for abbrev, bcn in BCNS.items():
     element = driver.find_element_by_id("BCN-input")
     element.send_keys(bcn)
     element.send_keys(Keys.RETURN)
-    time.sleep(5)
+    time.sleep(10)
 
     #step 3 - click the link to the most recent invoice - paid or unpaid
     ele4thunpaid = driver.find_elements_by_xpath("/html/body/form/div[5]/div/div/div/div/div[3]/div[3]/section[1]/ul/li[4]/div[2]")
@@ -56,8 +58,8 @@ for abbrev, bcn in BCNS.items():
     ele2ndunpaid = driver.find_elements_by_xpath("/html/body/form/div[5]/div/div/div/div/div[3]/div[3]/section[1]/ul/li[2]/div[2]")
     #note - 1st of multiple unpaid is /html/body/form/div[5]/div/div/div/div/div[3]/div[3]/section[1]/ul/li[1]/div[2], but if there are multiples we will want later one anyway
     ele1unpaid = driver.find_elements_by_xpath("/html/body/form/div[5]/div/div/div/div/div[3]/div[3]/section[1]/ul/li/div[2]")
-    #guessing on next 2 - schedule payments and payments in process - no examples right now
-    ele1sched = driver.find_elements_by_xpath("/html/body/form/div[5]/div/div/div/div/div[3]/div[3]/section[2]/ul/li/div[2]")
+    ele1sched1 = driver.find_elements_by_xpath("/html/body/form/div[5]/div/div/div/div/div[3]/div[3]/section[2]/ul/li/div[2]")
+    #guessing on next 1 - payments in process - no examples right now
     ele1inproc = driver.find_elements_by_xpath("/html/body/form/div[5]/div/div/div/div/div[3]/div[3]/section[3]/ul/li/div[2]")
     ele1stpaid = driver.find_elements_by_xpath("/html/body/form/div[5]/div/div/div/div/div[3]/div[3]/section[5]/ul/li[1]/div[2]")
 
@@ -69,18 +71,21 @@ for abbrev, bcn in BCNS.items():
         ele2ndunpaid[0].click()
     elif len(ele1unpaid) > 0:
         ele1unpaid[0].click()
-    elif len(ele1sched) > 0:
-        ele1sched[0].click()
+    elif len(ele1sched1) > 0:
+        ele1sched1[0].click()
+        time.sleep(5)
+        ele1sched2 = driver.find_elements_by_xpath("/html/body/form/div[5]/div/div/div/div/div[3]/div[3]/section[2]/ul/li/div[3]/ul/li/div[1]/a")
+        ele1sched2[0].click()
     elif len(ele1inproc) > 0:
         ele1inproc[0].click()
     elif len(ele1stpaid) > 0:
         ele1stpaid[0].click()
-    time.sleep(3)
+    time.sleep(10)
 
     #save excel and rename
     element = driver.find_element_by_xpath("/html/body/form/div[5]/div/div/div/div/div[3]/div[2]/div[2]/section[2]/div/a[1]/span[1]")
     element.click()
-    time.sleep(3)
+    time.sleep(7)
     rptname = abbrev + "-colonial-" + yrmo + ".xlsx"
     filename = max([filepath + "\\" + f for f in os.listdir(filepath)],key=os.path.getctime)
     shutil.copy(filename,os.path.join(filepath,rptname))
@@ -88,15 +93,15 @@ for abbrev, bcn in BCNS.items():
     #save PDF and rename
     element = driver.find_element_by_xpath("/html/body/form/div[5]/div/div/div/div/div[3]/div[2]/div[2]/section[2]/div/a[2]/span[1]")
     element.click()
-    time.sleep(3)
+    time.sleep(7)
     rptname = abbrev + "-colonial-" + yrmo + ".pdf"
     filename = max([filepath + "\\" + f for f in os.listdir(filepath)],key=os.path.getctime)
     shutil.copy(filename,os.path.join(filepath,rptname))
 
     #go back twice to the page where we can enter the BCN of the next group
     driver.back()
-    time.sleep(3)
+    time.sleep(7)
     driver.back()
-    time.sleep(3)
+    time.sleep(7)
 
 
