@@ -14,3 +14,5 @@ I'm also not able to rename the saved invoices from the generic name the broser 
 
 If you are new to Python, after installing Python you have to open Windows Powershell and install each package you're using one time.
 So you'd type "pip install selenium" without the quotes and hit Enter, and go through the list of packages at the beginning.
+
+v2 8-18-2020:  I extended the sleep time between steps because it timed out several times when I ran it at the end of July.  I updated the code for scheduled payments, although I was interrupted before I could test it so it may still not work.  And I updated the naming convention - invoices are generated around the 26th and due around the 13th, and I had planned to pull them around the 1st so I was using the current month to name the files.  However, I was asked to pull them as soon as they are available, so I used the month for the date 2 weeks from the current date, which should get the correct date regardless of whether you run the code at the end of the month or the beginning of the next.
